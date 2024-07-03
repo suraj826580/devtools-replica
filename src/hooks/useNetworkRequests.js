@@ -20,9 +20,10 @@ function useNetworkRequests() {
         id: Date.now(),
         url,
         method,
-        body,
+        body: body ? JSON.stringify(body) : null,
         startTime: performance.now(),
         type: getRequestType(url),
+        headers: {}, // Initialize headers
       };
 
       addRequest(request);
@@ -49,11 +50,18 @@ function useNetworkRequests() {
           parsedResponseBody = responseBody;
         }
 
+        // Capture response headers
+        const headers = {};
+        response.headers.forEach((value, key) => {
+          headers[key] = value;
+        });
+
         updateRequest(request.id, {
           status: response.status,
-          responseBody,
+          responseBody: parsedResponseBody,
           endTime: performance.now(),
           ok: response.ok,
+          headers: headers, // Add captured headers
         });
       } catch (error) {
         updateRequest(request.id, {

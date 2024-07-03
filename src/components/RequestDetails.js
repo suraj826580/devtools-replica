@@ -5,6 +5,13 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -26,25 +33,98 @@ function RequestDetails({ request }) {
   return (
     <Box>
       <Typography variant="h6">Request Details</Typography>
-      <Typography>URL: {request.url}</Typography>
-      <Typography>Method: {request.method}</Typography>
-      <Typography>Status: {request.status || "Pending"}</Typography>
-      <Typography>Start Time: {request.startTime.toFixed(2)} ms</Typography>
-      <Typography>
-        End Time:{" "}
-        {request.endTime ? request.endTime.toFixed(2) + " ms" : "Pending"}
-      </Typography>
-      <Typography>
-        Duration:{" "}
-        {request.endTime
-          ? (request.endTime - request.startTime).toFixed(2) + " ms"
-          : "Pending"}
-      </Typography>
+
+      <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                URL
+              </TableCell>
+              <TableCell>{request.url}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                Method
+              </TableCell>
+              <TableCell>{request.method}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                Status
+              </TableCell>
+              <TableCell>{request.status || "Pending"}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                Type
+              </TableCell>
+              <TableCell>{request.type}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                Start Time
+              </TableCell>
+              <TableCell>{request.startTime?.toFixed(2)} ms</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                End Time
+              </TableCell>
+              <TableCell>
+                {request.endTime
+                  ? request.endTime.toFixed(2) + " ms"
+                  : "Pending"}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                Duration
+              </TableCell>
+              <TableCell>
+                {request.endTime
+                  ? (request.endTime - request.startTime).toFixed(2) + " ms"
+                  : "Pending"}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {request.headers && (
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Headers</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Value</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(request.headers).map(([key, value]) => (
+                    <TableRow key={key}>
+                      <TableCell component="th" scope="row">
+                        {key}
+                      </TableCell>
+                      <TableCell>{value}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </AccordionDetails>
+        </Accordion>
+      )}
 
       {request.body && (
-        <Accordion>
+        <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Request Body (JSON)</Typography>
+            <Typography>Request Body</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
@@ -55,7 +135,7 @@ function RequestDetails({ request }) {
       )}
 
       {request.responseBody && (
-        <Accordion>
+        <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Response Body</Typography>
           </AccordionSummary>
